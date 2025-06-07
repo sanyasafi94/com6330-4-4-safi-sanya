@@ -27,7 +27,6 @@ var wordWin = document.getElementById("wins");
 var wordLoss = document.getElementById("losses");
 var wordBefore = document.getElementById("previous-word");
 
-// function newGame() {
 if (currentWord) {
   previousLetter = currentWord;
   wordBefore.textContent = previousLetter;
@@ -44,8 +43,6 @@ wrongLetter.textContent = guessWord.join(", ");
 
 wordWin.textContent = win;
 wordLoss.textContent = loss;
-
-// }
 
 function gameGuess(letter) {
   letter = letter.toLowercase();
@@ -76,12 +73,16 @@ function gameGuess(letter) {
     incorrectLetter.push(letter);
     remainingGuess--;
 
-    incorrectLetter.textContent = incorrectLetter.join(", ");
-    remainingGuess.textContent = remainingGuess;
-  }
+    incorrectLetter.textContent = wrongLetter.join(", ");
+    remainingGuess.textContent = remainingWord;
 
-  document.addEventListener("keydown", (event) => {
-    handleGuess(event.key);
-  });
-  document.addEventListener("DOMContentLoaded", newGame);
+    if (remainingGuess === 0) {
+      loss++;
+      wordLoss.textContent = loss;
+      setTimeout(() => {
+        alert("You lost! The word was: " + currentWord);
+        newGame();
+      }, 100);
+    }
+  }
 }

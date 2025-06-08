@@ -27,25 +27,27 @@ var wordWin = document.getElementById("wins");
 var wordLoss = document.getElementById("losses");
 var wordBefore = document.getElementById("previous-word");
 
-if (currentWord) {
-  previousLetter = currentWord;
-  wordBefore.textContent = previousLetter;
-}
 currentWord = words[Math.floor(Math.random() * words.length)];
 guessWord = Array(currentWord.length).fill("_");
+
 wordtoGuess.textContent = guessWord.join("");
 
 remainingGuess = 10;
 incorrectLetter = [];
 
 remainingWord.textContent = remainingGuess;
-wrongLetter.textContent = guessWord.join(", ");
 
 wordWin.textContent = win;
 wordLoss.textContent = loss;
+const body = document.querySelector("body");
+body.dispatchEvent(new KeyboardEvent("keypress", gameGuess));
+document.addEventListener("keypress", function (event) {
+  gameGuess(event.key.toString());
+});
 
 function gameGuess(letter) {
-  letter = letter.toLowercase();
+  console.log("here");
+  console.log("letter,", letter);
   if (
     !/^[a-z]$/.test(letter) ||
     incorrectLetter.includes(letter) ||
@@ -53,6 +55,8 @@ function gameGuess(letter) {
   ) {
     return;
   }
+  console.log("current word", currentWord);
+  console.log("here2");
 
   if (currentWord.includes(letter)) {
     for (let i = 0; i < currentWord.length; i++) {
@@ -60,29 +64,43 @@ function gameGuess(letter) {
         guessWord[i] = letter;
       }
     }
-    wordBefore.textContent = guessWord.join(" ");
+    wordtoGuess.textContent = guessWord;
+    console.log(guessWord.join(""));
     if (guessWord.join("") === currentWord) {
       win++;
       wordWin.textContent = win;
-      setTimeout(() => {
-        alert("You won! The word was: " + currentWord);
-        newGame();
-      }, 100);
+      incorrectLetter = [];
+      wrongLetter.textContent = incorrectLetter;
+      remainingGuess = 10;
+      remainingWord.textContent = remainingGuess;
+      wordBefore.textContent = remainingGuess;
+
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      guessWord = Array(currentWord.length).fill("_");
+
+      wordtoGuess.textContent = guessWord.join("");
     }
   } else {
+    console.log("here4");
     incorrectLetter.push(letter);
     remainingGuess--;
 
-    incorrectLetter.textContent = wrongLetter.join(", ");
-    remainingGuess.textContent = remainingWord;
+    wrongLetter.textContent = incorrectLetter.join(", ");
+    remainingWord.textContent = remainingGuess;
 
     if (remainingGuess === 0) {
       loss++;
       wordLoss.textContent = loss;
-      setTimeout(() => {
-        alert("You lost! The word was: " + currentWord);
-        newGame();
-      }, 100);
+      incorrectLetter = [];
+      wrongLetter.textContent = incorrectLetter;
+      remainingGuess = 10;
+      remainingWord.textContent = remainingGuess;
+      wordBefore.textContent = currentWord;
+
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      guessWord = Array(currentWord.length).fill("_");
+
+      wordtoGuess.textContent = guessWord.join("");
     }
   }
 }
